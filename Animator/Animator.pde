@@ -46,6 +46,17 @@ void drawObjects(){
   for(Shape shape: shapes){
     shape.checkHover();
   }
+  
+  for(Shape shape: shapes){
+    if(shape.controlButtons != null){
+      for(ControlButton controlButton: shape.controlButtons){
+        if(shape.isSelected){
+          controlButton.drawMe();
+        }
+        controlButton.update();
+      }
+    }
+  }
 }
 
 void drawUI(){

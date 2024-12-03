@@ -12,11 +12,12 @@ class Shape{
     this.pos1 = p;
     this.size = s;
     
+    // create default control buttons for a square
     if(type == "SQUARE"){
-      controlButtons.add(new ControlButton(new PVector(pos1.x - size/2, pos1.y - size/2), 5, this));  // top left
-      controlButtons.add(new ControlButton(new PVector(pos1.x + size/2, pos1.y - size/2), 5, this));  // top right
-      controlButtons.add(new ControlButton(new PVector(pos1.x - size/2, pos1.y + size/2), 5, this));  // bottom left
-      controlButtons.add(new ControlButton(new PVector(pos1.x + size/2, pos1.y + size/2), 5, this));  // bottom right
+      controlButtons.add(new ControlButton(new PVector(pos1.x - size/2, pos1.y - size/2), 8, this));  // top left
+      controlButtons.add(new ControlButton(new PVector(pos1.x + size/2, pos1.y - size/2), 8, this));  // top right
+      controlButtons.add(new ControlButton(new PVector(pos1.x - size/2, pos1.y + size/2), 8, this));  // bottom left
+      controlButtons.add(new ControlButton(new PVector(pos1.x + size/2, pos1.y + size/2), 8, this));  // bottom right
 
     }
   }

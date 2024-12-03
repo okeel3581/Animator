@@ -1,7 +1,7 @@
 class ControlButton{
   PVector pos;
   int size;
-  boolean isHovered = false;
+  boolean isSelected = false;
   Shape myShape;
   
   ControlButton(PVector p, int s, Shape myS){
