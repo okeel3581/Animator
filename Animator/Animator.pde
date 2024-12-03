@@ -53,7 +53,9 @@ void drawObjects(){
         if(shape.isSelected){
           controlButton.drawMe();
         }
-        controlButton.update();
+        if(controlButton.isMovable){
+          controlButton.update();
+        }
       }
     }
   }
@@ -167,6 +169,16 @@ void mousePressed(){
     
   }
   
+   for(Shape shape: shapes){
+    if(shape.controlButtons != null){
+      for(ControlButton controlButton: shape.controlButtons){
+        if(onCircle(controlButton.pos, controlButton.size)){
+          controlButton.isMovable = true;
+        }
+      }
+    }
+  }
+  
   for(Shape shape: shapes){
     if(shape.isSelected && shape.isHovered){
       shape.isMovable = true; 
@@ -187,6 +199,14 @@ void mouseReleased(){
   }
   else if(selected == "TIMELINE"){
 
+  }
+  
+  for(Shape shape: shapes){
+    if(shape.controlButtons != null){
+      for(ControlButton controlButton: shape.controlButtons){
+        controlButton.isMovable = false;   
+      }
+    }
   }
   
   for(Shape shape: shapes){
