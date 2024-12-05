@@ -12,7 +12,15 @@ class ControlButton{
 
   void drawMe(){
     fill(66, 209, 245);
+    
+    // rotate around the shape
+    pushMatrix();
+    translate(myShape.pos1.x, myShape.pos1.y);
+    rotate(myShape.rotation);
+
     circle(pos.x, pos.y, size);
+    popMatrix();
+
   }
 
   // mouse pressed: set selected to this control button
@@ -20,10 +28,15 @@ class ControlButton{
   // apply these value changes to the other control buttons and shape
   // on mouse release: disable the variable
 
-
+  // runs when isMovable
   void update(){
     pos.x = mouseX;
     pos.y = mouseY;
-    myShape.size = int(dist(pos.x, pos.y, myShape.pos1.x, myShape.pos1.y) - sqrt(pow(size, 2) + pow(size, 2)));
+    myShape.size = int(dist(pos.x, pos.y, myShape.pos1.x, myShape.pos1.y));
+    
+    PVector terminalArm = PVector.sub(pos, myShape.pos1);
+    myShape.rotation = terminalArm.heading();
+    
+    println(myShape.rotation);
   }
 }

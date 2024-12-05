@@ -7,6 +7,7 @@ class Shape{
   boolean isMovable = false;
   ArrayList<ControlButton> controlButtons = new ArrayList<ControlButton>();
   int buttonSize = 8;
+  float rotation = 0;
   
   Shape(String t, PVector p, int s){
     this.type = t;
