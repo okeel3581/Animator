@@ -12,14 +12,15 @@ class ControlButton{
 
   void drawMe(){
     fill(66, 209, 245);
-    
+    println(myShape.pos1);
     // rotate around the shape
-    pushMatrix();
-    translate(myShape.pos1.x, myShape.pos1.y);
-    rotate(myShape.rotation);
+    //pushMatrix();
+    //translate(pos.x, pos.y);
+    //rotate(myShape.rotation);
+    //translate(-pos.x, -pos.y);
 
     circle(pos.x, pos.y, size);
-    popMatrix();
+    //popMatrix();
 
   }
 
@@ -29,14 +30,15 @@ class ControlButton{
   // on mouse release: disable the variable
 
   // runs when isMovable
-  void update(){
+  void update() {
     pos.x = mouseX;
     pos.y = mouseY;
-    myShape.size = int(dist(pos.x, pos.y, myShape.pos1.x, myShape.pos1.y));
     
-    PVector terminalArm = PVector.sub(pos, myShape.pos1);
-    myShape.rotation = terminalArm.heading();
+    PVector cornerVector = PVector.sub(pos, myShape.pos1);
+    float cornerDistance = cornerVector.mag();
+    myShape.size = int((cornerDistance / sqrt(2)) * 2);
     
-    println(myShape.rotation);
+    myShape.rotation = cornerVector.heading();
+    
   }
 }
