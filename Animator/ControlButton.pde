@@ -12,15 +12,22 @@ class ControlButton{
 
   void drawMe(){
     fill(66, 209, 245);
-    println(myShape.pos1);
-    // rotate around the shape
+    
+    PVector tempPos = pos;
+    println(myShape.rotation);
+    if(myShape.rotation != 0){
+    pos.x = tempPos.x + myShape.pos1.x * cos(myShape.rotation) - myShape.pos1.y * sin(myShape.rotation);
+    pos.y = tempPos.y + myShape.pos1.y * sin(myShape.rotation) + myShape.pos1.y * cos(myShape.rotation);
+    }
+    //println(myShape.rotation);
     //pushMatrix();
-    //translate(pos.x, pos.y);
+    //pos = new PVector(20, 20);
+    //translate(-myShape.pos1.x, -myShape.pos1.y);
     //rotate(myShape.rotation);
-    //translate(-pos.x, -pos.y);
 
     circle(pos.x, pos.y, size);
     //popMatrix();
+    
 
   }
 
