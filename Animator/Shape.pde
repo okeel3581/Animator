@@ -54,7 +54,25 @@ class Shape{
     }
     
     if(type == "SQUARE"){
-      rect(pos1.x - size/2, pos1.y - size/2, size, size);
+      
+      // TRANSLATE TO POSITION TO ROTATE AROUND (ITSELF IN THIS CASE)
+      // ROTATE BY RADIANS 
+      // DRAW RECTANGLE BY SIZE AROUND 0, 0
+      //-------------
+      //println(rotation);
+      //pushMatrix();
+      //translate(pos1.x, pos1.y);
+      //rotate(rotation);
+      //rect(pos1.x - size/2, pos1.y - size/2, size, size);
+      //popMatrix();
+      
+      pushMatrix();
+      translate(pos1.x, pos1.y);
+      rotate(rotation);
+      rect(-size / 2, -size / 2, size, size);
+      popMatrix();
+      
+      
     } 
     else if(type == "TRIANGLE"){
       triangle(pos1.x, pos1.y, pos2.x, pos2.y, pos3.x, pos3.y);
