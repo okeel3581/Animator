@@ -11,30 +11,18 @@ class ControlButton{
   }
 
   void drawMe(){
-    fill(66, 209, 245);
-    
-    //PVector tempPos = pos;
-    println(myShape.rotation);
-    //if(myShape.rotation != 0){
-    //pos.x = tempPos.x + myShape.pos1.x * cos(myShape.rotation) - myShape.pos1.y * sin(myShape.rotation);
-    //pos.y = tempPos.y + myShape.pos1.y * sin(myShape.rotation) + myShape.pos1.y * cos(myShape.rotation);
+    //fill(66, 209, 245);
+   
+    //if(!isMovable){
+    //  pushMatrix();
+    //  translate(myShape.pos1.x, myShape.pos1.y);
+    //  rotate(myShape.rotation);
+    //  circle(pos.x - myShape.pos1.x, pos.y - myShape.pos1.y, size);
+    //  popMatrix();
     //}
-    //println(myShape.rotation);
-    //pushMatrix();
-    //pos = new PVector(20, 20);
-    //translate(-myShape.pos1.x, -myShape.pos1.y);
-    //rotate(myShape.rotation);
-    if(!isMovable){
-      pushMatrix();
-      translate(myShape.pos1.x, myShape.pos1.y);
-      rotate(myShape.rotation);
-      circle(pos.x - myShape.pos1.x, pos.y - myShape.pos1.y, size);
-      popMatrix();
-    }
-    else{
-      circle(pos.x, pos.y, size);
-    }
-    //popMatrix();
+    //else{
+    //  circle(pos.x, pos.y, size);
+    //}
     
 
   }
@@ -46,14 +34,14 @@ class ControlButton{
 
   // runs when isMovable
   void update() {
-    pos.x = mouseX;
-    pos.y = mouseY;
+    //pos.x = mouseX;
+    //pos.y = mouseY;
     
-    PVector cornerVector = PVector.sub(pos, myShape.pos1);
-    float cornerDistance = cornerVector.mag();
-    myShape.size = int((cornerDistance / sqrt(2)) * 2);
+    //PVector cornerVector = PVector.sub(pos, myShape.pos1);
+    //float cornerDistance = cornerVector.mag();
+    //myShape.size = int((cornerDistance / sqrt(2)) * 2);
     
-    myShape.rotation = cornerVector.heading() + PI/4;
+    //myShape.rotation = cornerVector.heading() + PI/4;    // pi/4 to account for 45 degree difference from center line to corner where you actually click
     
   }
 }

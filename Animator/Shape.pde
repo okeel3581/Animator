@@ -59,12 +59,6 @@ class Shape{
       // ROTATE BY RADIANS 
       // DRAW RECTANGLE BY SIZE AROUND 0, 0
       //-------------
-      //println(rotation);
-      //pushMatrix();
-      //translate(pos1.x, pos1.y);
-      //rotate(rotation);
-      //rect(pos1.x - size/2, pos1.y - size/2, size, size);
-      //popMatrix();
       
       pushMatrix();
       translate(pos1.x, pos1.y);
@@ -92,7 +86,7 @@ class Shape{
   
   void checkHover(){
     if(type == "SQUARE"){
-      if(onSquare(pos1.x, pos1.y, size, size)) {    // change sizes for 2 dimnesions
+      if(onSquare(pos1.x, pos1.y, size, size)) {    // change sizes for 2 dimensions
         isHovered = true; 
       }
       else isHovered = false;
@@ -113,7 +107,7 @@ class Shape{
   
   void checkSelect(){
     if(type == "SQUARE" && isHovered && selected == "NONE"){
-      if(onSquare(pos1.x, pos1.y, size, size) && isHovered) {    // change sizes for 2 dimnesions
+      if(onSquare(pos1.x, pos1.y, size, size) && isHovered) {    // change sizes for 2 dimensions
         isSelected = true;
         selected = "SHAPE";
         selectedShape = this;

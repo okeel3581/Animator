@@ -12,7 +12,10 @@ float timelineX;
 
 Shape selectedShape;
 String selected;
+String mouseMode;    // click, rotate, resize, etc.
 ArrayList<Shape> shapes = new ArrayList<Shape>();
+
+ArrayList<Button> buttons = new ArrayList<Button>();
 
 void setup(){
   frameRate(60);
@@ -21,6 +24,7 @@ void setup(){
   size(1200, 700);
   selected = "NONE";
   selectedShape = null;
+  mouseMode = "CLICK";
   
   uiSize = 200;
   sideLength = 40;
@@ -31,6 +35,13 @@ void setup(){
   ySide = height - 150;
   sizeSide = 20;
   timelineX = leftSide;
+  
+  // setup buttons
+  buttons.add(new Button("CLICK", new PVector(uiSize/2, 400), 40));
+  buttons.add(new Button("RESIZE", new PVector(uiSize/2, 500), 40));
+  buttons.add(new Button("ROTATE", new PVector(uiSize/2, 600), 40));
+
+
 }
 
 void draw(){
@@ -39,25 +50,13 @@ void draw(){
   
   drawUI();
   drawTimeline();
-  drawObjects();
+  drawButtons();
 }
 
-void drawObjects(){
-  for(Shape shape: shapes){
-    shape.checkHover();
-  }
-  
-  for(Shape shape: shapes){
-    if(shape.controlButtons != null){
-      for(ControlButton controlButton: shape.controlButtons){
-        if(shape.isSelected){
-          controlButton.drawMe();
-        }
-        if(controlButton.isMovable){
-          controlButton.update();
-        }
-      }
-    }
+void drawButtons(){
+  for(Button button: buttons){
+    button.checkHover();
+    button.drawMe();
   }
 }
 
@@ -84,6 +83,7 @@ void drawUI(){
     
   // draw shapes
   for(Shape shape: shapes){
+    shape.checkHover();
     shape.drawMe();
   }
   
@@ -202,18 +202,14 @@ void mouseReleased(){
   }
   
   for(Shape shape: shapes){
-    if(shape.controlButtons != null){
-      for(ControlButton controlButton: shape.controlButtons){
-        controlButton.isMovable = false;   
-      }
-    }
-  }
-  
-  for(Shape shape: shapes){
     shape.isSelected = false;
     shape.isMovable = false;
     cursor(ARROW);
     shape.checkSelect();
+  }
+  
+  for(Button button: buttons){
+    button.checkSelect();
   }
   
   selected = "NONE";
