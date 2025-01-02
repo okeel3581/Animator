@@ -53,6 +53,15 @@ class Button{
         }
         isSelected = true;
         mouseMode = type;
+        
+      //  if(type == "CLICK"){
+      //    cursor(ARROW);
+      //  }
+      //  else if(type == "RESIZE"){
+      //    cursor(CROSS);
+      //  }
+      //  else if(type == "ROTATE"){
+      //    cursor(HAND);
       }
     }
   }

@@ -1,10 +1,12 @@
 class Shape{
   String type;
-  PVector pos1, pos2, pos3;
+  PVector pos1, pos2, pos3, centerPoint;
   int size;
   boolean isHovered = false;
   boolean isSelected = false;
   boolean isMovable = false;
+  boolean isResizable = false;
+  boolean isRotatable = false;
   ArrayList<ControlButton> controlButtons = new ArrayList<ControlButton>();
   int buttonSize = 8;
   float rotation = 0;
@@ -24,14 +26,6 @@ class Shape{
     }
   }
   
-  Shape(String t, PVector p1, PVector p2, PVector p3, int s){
-    this.type = t;
-    this.pos1 = p1;
-    this.pos2 = p2;
-    this.pos3 = p3;
-    this.size = s;
-  }
-  
   void drawMe(){ 
     if(isSelected){
       strokeWeight(4);
@@ -46,7 +40,7 @@ class Shape{
       stroke(0);
     }
     
-    if(isMovable){
+    if(isMovable || isResizable || isRotatable){
       fill(215);
     }
     else{
@@ -69,7 +63,7 @@ class Shape{
       
     } 
     else if(type == "TRIANGLE"){
-      triangle(pos1.x, pos1.y, pos2.x, pos2.y, pos3.x, pos3.y);
+      triangle(pos1.x - size/2, pos1.y + size/(2*sqrt(3)), pos1.x + size/2, pos1.y + size/(2*sqrt(3)), pos1.x, pos1.y - size/sqrt(3));
     }
     else if (type == "CIRCLE"){
       circle(pos1.x, pos1.y, size);
@@ -92,7 +86,7 @@ class Shape{
       else isHovered = false;
     }
     else if(type == "TRIANGLE"){
-      if(onTriangle(pos1, pos2, pos3)){
+      if(onTriangle(new PVector(pos1.x - size/2, pos1.y + size/(2*sqrt(3))), new PVector(pos1.x + size/2, pos1.y + size/(2*sqrt(3))), new PVector(pos1.x, pos1.y - size/sqrt(3)))){
         isHovered = true;
       }
       else isHovered = false;
@@ -114,7 +108,7 @@ class Shape{
       }
     }
     else if(type == "TRIANGLE" && isHovered && selected == "NONE"){
-      if(onTriangle(pos1, pos2, pos3)){
+      if(onTriangle(new PVector(pos1.x - size/2, pos1.y + size/(2*sqrt(3))), new PVector(pos1.x + size/2, pos1.y + size/(2*sqrt(3))), new PVector(pos1.x, pos1.y - size/sqrt(3)))){
         isSelected = true;
         selected = "SHAPE";
         selectedShape = this;

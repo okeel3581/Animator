@@ -40,7 +40,8 @@ void setup(){
   buttons.add(new Button("CLICK", new PVector(uiSize/2, 400), 40));
   buttons.add(new Button("RESIZE", new PVector(uiSize/2, 500), 40));
   buttons.add(new Button("ROTATE", new PVector(uiSize/2, 600), 40));
-
+  
+  buttons.get(0).isSelected = true;
 
 }
 
@@ -107,21 +108,18 @@ void drawUI(){
    time = constrain(int(map(mouseX, leftSide, rightSide, 0, maxTime)), 0, maxTime);
    timelineX = constrain(mouseX, leftSide, rightSide);
   }
-  
+   
   for(Shape shape: shapes){
-    if(shape.isMovable){
-      if(shape.type == "SQUARE"){
-        shape.pos1 = new PVector(mouseX, mouseY);
-      }
-      else if(shape.type == "TRIANGLE"){
-        shape.pos1 = new PVector(mouseX - sideLength/2, mouseY + sideLength/(2*sqrt(3)));
-        shape.pos2 = new PVector(mouseX + sideLength/2, mouseY + sideLength/(2*sqrt(3)));
-        shape.pos3 = new PVector(mouseX, mouseY - sideLength/(sqrt(3)));
+    if(mouseMode == "CLICK" && shape.isMovable){
+      shape.pos1 = new PVector(mouseX, mouseY);
+    }
     
-      }
-      else if(shape.type == "CIRCLE"){
-        shape.pos1 = new PVector(mouseX, mouseY);
-      }
+    else if(mouseMode == "RESIZE" && shape.isResizable){
+      shape.size = int(dist(mouseX, mouseY, shape.pos1.x, shape.pos1.y)) * 2;
+    }
+    
+    else if(mouseMode == "ROTATE" && shape.isRotatable){
+      
     }
   }
 
@@ -169,33 +167,32 @@ void mousePressed(){
     
   }
   
-   for(Shape shape: shapes){
-    if(shape.controlButtons != null){
-      for(ControlButton controlButton: shape.controlButtons){
-        if(onCircle(controlButton.pos, controlButton.size)){
-          controlButton.isMovable = true;
-        }
-      }
-    }
-  }
-  
   for(Shape shape: shapes){
-    if(shape.isSelected && shape.isHovered){
+    if(shape.isSelected && shape.isHovered && mouseMode == "CLICK"){
       shape.isMovable = true; 
       cursor(MOVE);
+    }
+    else if(shape.isSelected && shape.isHovered && mouseMode == "RESIZE"){
+      shape.isResizable = true; 
+      cursor(CROSS);
+      println("RESIZABLE");
+    }
+    else if(shape.isSelected && shape.isHovered && mouseMode == "ROTATE"){
+      shape.isRotatable = true; 
+      cursor(HAND);
     }
   }
 }
 
 void mouseReleased(){
   if(selected == "SQUARE"){
-    shapes.add(new Shape("SQUARE", new PVector(mouseX, mouseY), 40));
+    shapes.add(new Shape("SQUARE", new PVector(mouseX, mouseY), sideLength));
   }
   else if(selected == "TRIANGLE"){
-    shapes.add(new Shape("TRIANGLE", new PVector(mouseX - sideLength/2, mouseY + sideLength/(2*sqrt(3))), new PVector(mouseX + sideLength/2, mouseY + sideLength/(2*sqrt(3))), new PVector(mouseX, mouseY - sideLength/sqrt(3)), sideLength));
+    shapes.add(new Shape("TRIANGLE", new PVector(mouseX, mouseY), sideLength));
   }
   else if(selected == "CIRCLE"){
-    shapes.add(new Shape("CIRCLE", new PVector(mouseX, mouseY), 40));  
+    shapes.add(new Shape("CIRCLE", new PVector(mouseX, mouseY), sideLength));  
   }
   else if(selected == "TIMELINE"){
 
@@ -204,6 +201,8 @@ void mouseReleased(){
   for(Shape shape: shapes){
     shape.isSelected = false;
     shape.isMovable = false;
+    shape.isResizable = false;
+    shape.isRotatable = false;
     cursor(ARROW);
     shape.checkSelect();
   }
