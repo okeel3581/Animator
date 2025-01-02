@@ -119,7 +119,9 @@ void drawUI(){
     }
     
     else if(mouseMode == "ROTATE" && shape.isRotatable){
-      
+      PVector mouseVector = new PVector(mouseX, mouseY);
+      PVector base = mouseVector.sub(shape.pos1);
+      shape.rotation = base.heading();
     }
   }
 

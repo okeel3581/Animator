@@ -63,7 +63,11 @@ class Shape{
       
     } 
     else if(type == "TRIANGLE"){
-      triangle(pos1.x - size/2, pos1.y + size/(2*sqrt(3)), pos1.x + size/2, pos1.y + size/(2*sqrt(3)), pos1.x, pos1.y - size/sqrt(3));
+      pushMatrix();
+      translate(pos1.x, pos1.y);
+      rotate(rotation);
+      triangle(-size/2, size/(2*sqrt(3)), size/2, size/(2*sqrt(3)), 0, -size/sqrt(3));
+      popMatrix();
     }
     else if (type == "CIRCLE"){
       circle(pos1.x, pos1.y, size);
