@@ -4,12 +4,14 @@ class Button{
   int size;
   boolean isHovered = false;
   boolean isSelected = false;
+  PImage icon;
 
   
-  Button(String t, PVector p, int s){
+  Button(String t, PVector p, int s, PImage i){
     this.type = t;
     this.pos = p;
     this.size = s;
+    this.icon = i;
     
    
   }
@@ -27,10 +29,16 @@ class Button{
       strokeWeight(1);
       stroke(0);
     }
-  
+
     fill(255);
-  
-    square(pos.x - size/2, pos.y - size/2, size);
+    
+    if(!(type == "PLAYBACK" || type == "FORWARD" || type == "BACKWARD")){
+      square(pos.x - size/2, pos.y - size/2, size);
+    }
+    
+    float tempSize = 0.8*size;
+    
+    image(icon, pos.x - tempSize/2, pos.y - tempSize/2, tempSize, tempSize);
 
     strokeWeight(1);
     stroke(0);
@@ -48,20 +56,23 @@ class Button{
   void checkSelect(){
     if(isHovered && selected == "NONE"){
       if(onSquare(pos.x, pos.y, size, size) && isHovered) {    // change sizes for 2 dimensions
-        for(Button button: buttons){
-          button.unselect();
+        if(type == "PLAYBACK"){    // stopping and starting
+          if(isPlaying) icon = loadImage("play.png"); else icon = loadImage("pause.png");
+          isPlaying = !isPlaying;
         }
-        isSelected = true;
-        mouseMode = type;
-        
-      //  if(type == "CLICK"){
-      //    cursor(ARROW);
-      //  }
-      //  else if(type == "RESIZE"){
-      //    cursor(CROSS);
-      //  }
-      //  else if(type == "ROTATE"){
-      //    cursor(HAND);
+        else if(type == "FORWARD"){
+          adjustTimeline(1);
+        }
+        else if(type == "BACKWARD"){
+          adjustTimeline(-1);
+        }
+        else{
+          for(Button button: buttons){
+              button.unselect();
+            }
+            isSelected = true;
+            mouseMode = type;
+        }
       }
     }
   }

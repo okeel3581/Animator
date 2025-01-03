@@ -7,6 +7,7 @@ class Shape{
   boolean isMovable = false;
   boolean isResizable = false;
   boolean isRotatable = false;
+  boolean isTransformable = false;
   ArrayList<ControlButton> controlButtons = new ArrayList<ControlButton>();
   int buttonSize = 8;
   float rotation = 0;

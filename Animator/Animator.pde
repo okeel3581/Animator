@@ -6,6 +6,7 @@ int time;
 int maxTime;
 int leftSide;
 int rightSide;
+int middle;
 int ySide;
 int sizeSide;
 float timelineX;
@@ -16,6 +17,10 @@ String mouseMode;    // click, rotate, resize, etc.
 ArrayList<Shape> shapes = new ArrayList<Shape>();
 
 ArrayList<Button> buttons = new ArrayList<Button>();
+ArrayList<Button> timelineButtons = new ArrayList<Button>();
+
+
+boolean isPlaying;
 
 void setup(){
   frameRate(60);
@@ -32,26 +37,40 @@ void setup(){
   maxTime = 500;
   leftSide = uiSize + 20;
   rightSide = width - 20;
-  ySide = height - 150;
+  middle = (rightSide + leftSide) / 2;
+  ySide = height - 75;
   sizeSide = 20;
   timelineX = leftSide;
+  isPlaying = false;
   
-  // setup buttons
-  buttons.add(new Button("CLICK", new PVector(uiSize/2, 400), 40));
-  buttons.add(new Button("RESIZE", new PVector(uiSize/2, 500), 40));
-  buttons.add(new Button("ROTATE", new PVector(uiSize/2, 600), 40));
-  
+  // setup edit buttons
+  buttons.add(new Button("CLICK", new PVector(uiSize/3, 400), 40, loadImage("move.png")));
+  buttons.add(new Button("RESIZE", new PVector(2*uiSize/3, 400), 40, loadImage("resize.png")));
+  buttons.add(new Button("ROTATE", new PVector(uiSize/3, 460), 40, loadImage("rotate.png")));
+  buttons.add(new Button("TRANSFORM", new PVector(2*uiSize/3, 460), 40, loadImage("transform.png")));
+  buttons.add(new Button("DELETE", new PVector(uiSize/3, 520), 40, loadImage("delete.png")));
+
   buttons.get(0).isSelected = true;
+  
+  // setup timeline buttons
+  timelineButtons.add(new Button("PLAYBACK", new PVector(middle, 660), 50, loadImage("play.png")));
+  timelineButtons.add(new Button("FORWARD", new PVector(middle + 80, 660), 50, loadImage("forward.png")));
+  timelineButtons.add(new Button("BACKWARD", new PVector(middle - 80, 660), 50, loadImage("backward.png")));
+
+  
 
 }
 
 void draw(){
   background(255);
   
+  if(isPlaying){
+    adjustTimeline(1);
+  }
   
   drawUI();
   drawTimeline();
-  drawButtons();
+  drawKeyframes();
 }
 
 void drawButtons(){
@@ -59,9 +78,21 @@ void drawButtons(){
     button.checkHover();
     button.drawMe();
   }
+  
+  for(Button button: timelineButtons){
+    button.checkHover();
+    button.drawMe();
+  }
 }
 
 void drawUI(){
+  // draw shapes
+  for(Shape shape: shapes){
+    shape.checkHover();
+    shape.drawMe();
+    if(shape.isSelected) selectedShape = shape;    // TEMP WORKING FIX TO SELECTED SHAPE NOT SHOWING
+  }
+  
   strokeWeight(1);
   stroke(0);
   
@@ -81,12 +112,8 @@ void drawUI(){
   
   fill(255);
   circle(uiSize/2, 260, 40);
-    
-  // draw shapes
-  for(Shape shape: shapes){
-    shape.checkHover();
-    shape.drawMe();
-  }
+
+  drawButtons();
   
   // drawing selected
   if(selected == "SQUARE"){
@@ -123,6 +150,13 @@ void drawUI(){
       PVector base = mouseVector.sub(shape.pos1);
       shape.rotation = base.heading();
     }
+    
+    else if(mouseMode == "TRANSFORM" && shape.isTransformable){
+      PVector mouseVector = new PVector(mouseX, mouseY);
+      PVector base = mouseVector.sub(shape.pos1);
+      shape.rotation = base.heading();
+      shape.size = int(dist(mouseX, mouseY, shape.pos1.x, shape.pos1.y)) * 2;
+    }
   }
 
   // create timeline text
@@ -140,6 +174,23 @@ void drawUI(){
 
 }
 
+void adjustTimeline(int dTime){
+  time = constrain(time += dTime, 0, maxTime);
+  timelineX = map(time, 0, maxTime, leftSide, rightSide);
+}
+
+void drawKeyframes(){
+  fill(0);
+  stroke(0);
+  textAlign(LEFT);
+  textSize(20);
+  
+  String displayText = (selectedShape == null) ? "NONE" : selectedShape.type + " " + shapes.indexOf(selectedShape);
+  
+  text("Selected Shape: " + displayText, uiSize + 20, 535);
+  
+}
+
 void drawTimeline(){
   strokeWeight(2);
   stroke(0);
@@ -153,6 +204,8 @@ void drawTimeline(){
 }
 
 void mousePressed(){
+ 
+  
   if(selected == "NONE"){
     if(onSquare(uiSize/2, 100, 40, 40)){
       selected = "SQUARE";
@@ -177,16 +230,28 @@ void mousePressed(){
     else if(shape.isSelected && shape.isHovered && mouseMode == "RESIZE"){
       shape.isResizable = true; 
       cursor(CROSS);
-      println("RESIZABLE");
     }
     else if(shape.isSelected && shape.isHovered && mouseMode == "ROTATE"){
       shape.isRotatable = true; 
       cursor(HAND);
     }
+    else if(shape.isSelected && shape.isHovered && mouseMode == "TRANSFORM"){
+      shape.isTransformable = true; 
+      cursor(CROSS);
+    }
   }
 }
 
 void mouseReleased(){
+   if(mouseMode == "DELETE"){
+    for(Shape shape: shapes){
+      if(shape.isSelected && shape.isHovered){
+        shapes.remove(shape);
+        break;
+      }
+    }
+  }
+  
   if(selected == "SQUARE"){
     shapes.add(new Shape("SQUARE", new PVector(mouseX, mouseY), sideLength));
   }
@@ -205,11 +270,16 @@ void mouseReleased(){
     shape.isMovable = false;
     shape.isResizable = false;
     shape.isRotatable = false;
+    shape.isTransformable = false;
     cursor(ARROW);
     shape.checkSelect();
   }
   
   for(Button button: buttons){
+    button.checkSelect();
+  }
+  
+  for(Button button: timelineButtons){
     button.checkSelect();
   }
   
