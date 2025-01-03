@@ -1,6 +1,6 @@
 class Shape{
   String type;
-  PVector pos1, pos2, pos3, centerPoint;
+  PVector pos1;
   int size;
   boolean isHovered = false;
   boolean isSelected = false;
@@ -11,6 +11,9 @@ class Shape{
   ArrayList<ControlButton> controlButtons = new ArrayList<ControlButton>();
   int buttonSize = 8;
   float rotation = 0;
+  
+  ArrayList<Keyframe> frameData = new ArrayList<Keyframe>();
+
   
   Shape(String t, PVector p, int s){
     this.type = t;
@@ -24,6 +27,10 @@ class Shape{
       controlButtons.add(new ControlButton(new PVector(pos1.x - size/2, pos1.y + size/2), buttonSize, this));  // bottom left
       controlButtons.add(new ControlButton(new PVector(pos1.x + size/2, pos1.y + size/2), buttonSize, this));  // bottom right
 
+    }
+    
+    for(int i = 0; i < maxTime; i++){
+      frameData.add(new Keyframe(pos1, size, rotation, false));
     }
   }
   
@@ -81,6 +88,10 @@ class Shape{
     if(type == "SQUARE"){
       
     }
+  }
+  
+  Keyframe getFrameData(){
+    return new Keyframe(pos1, size, rotation, true);    // guiding keyframe as it has been directly edited
   }
   
   void checkHover(){
