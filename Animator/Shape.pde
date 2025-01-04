@@ -29,7 +29,7 @@ class Shape{
 
     }
     
-    for(int i = 0; i < maxTime; i++){
+    for(int i = 0; i < numFrames; i++){
       frameData.add(new Keyframe(pos1, size, rotation, false));
     }
   }
@@ -90,8 +90,67 @@ class Shape{
     }
   }
   
-  Keyframe getFrameData(){
-    return new Keyframe(pos1, size, rotation, true);    // guiding keyframe as it has been directly edited
+  void updateAllKeyframes(){
+    ArrayList<Keyframe> guidingFrameData = new ArrayList<Keyframe>();
+    ArrayList<Integer> guidingFrameTimes = new ArrayList<Integer>();
+    
+    // find and store all guiding keyframes
+    int i = 0;
+    for(Keyframe keyframe: frameData){
+      if(keyframe.guidingKeyframe){
+        guidingFrameData.add(keyframe);
+        guidingFrameTimes.add(i);
+      }
+      i++;
+    }
+    
+    if(guidingFrameData.size() == 1){
+      for(Keyframe keyframe: frameData){
+        if(keyframe != guidingFrameData.get(0)){
+          keyframe.fillThroughSet(guidingFrameData.get(0));    // fill with copies of the guiding frame
+        }
+      }
+    }
+    
+    else if(guidingFrameData.size() == 0){
+      for(Keyframe keyframe: frameData){
+        keyframe.fillThroughSet(getFrameData(false));    // fill with copies of current frame
+      }
+    }
+    
+    // majority case, where there is more than 1 keyframe
+    else{
+      Keyframe tempFrame;
+      // fill leading up to the first keyframe
+      for(int j = 0; j < guidingFrameTimes.get(0); j++){
+        tempFrame = guidingFrameData.get(0);
+        tempFrame.guidingKeyframe = false;
+        //print(frameData.get(j).guidingKeyframe);
+        
+        frameData.set(j, tempFrame);
+       // print(frameData.get(guidingFrameTimes.get(0)).guidingKeyframe);
+      }
+      
+      int t = 0;
+      
+      // fill after the last keyframe       THIS CAUSES PROBLEMS ACCORDING TO THE PRINT STATEMENT BELOW
+      //for(int k = guidingFrameTimes.get( guidingFrameData.size() - 1); k < maxTime; k++){    // maybe try maxFrames instead if not working
+      //  tempFrame = guidingFrameData.get( guidingFrameData.size() - 1 );
+      //  tempFrame.guidingKeyframe = false;
+      //  frameData.set(k, tempFrame);
+      //  println(k);
+      //}
+      
+      for(Keyframe kf: guidingFrameData){
+        println(kf.guidingKeyframe);
+        println(frameData.get(guidingFrameTimes.get(t)).guidingKeyframe);
+        t++;
+      }
+    }
+  }
+  
+  Keyframe getFrameData(boolean guiding){
+    return new Keyframe(pos1, size, rotation, guiding);    // guiding keyframe as it has been directly edited
   }
   
   void checkHover(){

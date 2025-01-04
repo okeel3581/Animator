@@ -10,4 +10,12 @@ class Keyframe{
     this.rotation = r;
     this.guidingKeyframe = gk;
   }
+  
+  // used by shape for updating keyframes
+  void fillThroughSet(Keyframe keyframe){
+    pos1 = keyframe.pos1;
+    size = keyframe.size;
+    rotation = keyframe.rotation;
+    guidingKeyframe = false;
+  }
 }

@@ -9,6 +9,7 @@ int rightSide;
 int middle;
 int ySide;
 int sizeSide;
+int numFrames;
 float timelineX;
 
 Shape selectedShape;
@@ -34,7 +35,8 @@ void setup() {
   uiSize = 200;
   sideLength = 40;
   time = 0;
-  maxTime = 500;
+  maxTime = 500;    // NOTE: While the max time is a certain number, the number of actual frames is 1 more (for frame 0)
+  numFrames = maxTime + 1;
   leftSide = uiSize + 20;
   rightSide = width - 20;
   middle = (rightSide + leftSide) / 2;
@@ -44,18 +46,20 @@ void setup() {
   isPlaying = false;
 
   // setup edit buttons
-  buttons.add(new Button("CLICK", new PVector(uiSize/3, 400), 40, loadImage("move.png")));
-  buttons.add(new Button("RESIZE", new PVector(2*uiSize/3, 400), 40, loadImage("resize.png")));
-  buttons.add(new Button("ROTATE", new PVector(uiSize/3, 460), 40, loadImage("rotate.png")));
-  buttons.add(new Button("TRANSFORM", new PVector(2*uiSize/3, 460), 40, loadImage("transform.png")));
-  buttons.add(new Button("DELETE", new PVector(uiSize/3, 520), 40, loadImage("delete.png")));
+  buttons.add(new Button("CLICK", new PVector(uiSize/3, 400), 40, loadImage("move.png"), false));
+  buttons.add(new Button("RESIZE", new PVector(2*uiSize/3, 400), 40, loadImage("resize.png"), false));
+  buttons.add(new Button("ROTATE", new PVector(uiSize/3, 460), 40, loadImage("rotate.png"), false));
+  buttons.add(new Button("TRANSFORM", new PVector(2*uiSize/3, 460), 40, loadImage("transform.png"), false));
+  buttons.add(new Button("DELETE", new PVector(uiSize/3, 520), 40, loadImage("delete.png"), false));
 
   buttons.get(0).isSelected = true;
 
   // setup timeline buttons
-  timelineButtons.add(new Button("PLAYBACK", new PVector(middle, 660), 50, loadImage("play.png")));
-  timelineButtons.add(new Button("FORWARD", new PVector(middle + 80, 660), 50, loadImage("forward.png")));
-  timelineButtons.add(new Button("BACKWARD", new PVector(middle - 80, 660), 50, loadImage("backward.png")));
+  timelineButtons.add(new Button("PLAYBACK", new PVector(middle, 660), 50, loadImage("play.png"), true));
+  timelineButtons.add(new Button("FORWARD", new PVector(middle + 80, 660), 50, loadImage("forward.png"), true));
+  timelineButtons.add(new Button("BACKWARD", new PVector(middle - 80, 660), 50, loadImage("backward.png"), true));
+  timelineButtons.add(new Button("NEWKEYFRAME", new PVector(middle - 200, 660), 50, loadImage("keyframe.png"), true));
+
 }
 
 void draw() {
@@ -266,16 +270,18 @@ void mouseReleased() {
       shape.rotation = shape.frameData.get(time).rotation;
     }
   }
-
+  
   for (Shape shape : shapes) {
-    if (shape.isSelected) {  // update keyframes
-      Keyframe tempFrame = shape.getFrameData();
-      //if(tempFrame.pos1 != shape.pos1 || tempFrame.size != shape.size || tempFrame.rotation != shape.rotation){
-        shape.frameData.set(time, tempFrame);
-      //}
+    //if (shape.isSelected) {  // update keyframes
+    //  Keyframe tempFrame = shape.getFrameData();
+    //  if(tempFrame.pos1.x != shape.pos1.x || tempFrame.pos1.y != shape.pos1.y || tempFrame.size != shape.size || tempFrame.rotation != shape.rotation){
+    //    shape.frameData.set(time, tempFrame);
+    //  }
+    //}
+    
+    if(selected != "TIMELINE" || timelineButtons.get(3).isHovered){
+      shape.isSelected = false;
     }
-
-    shape.isSelected = false;
     shape.isMovable = false;
     shape.isResizable = false;
     shape.isRotatable = false;
@@ -291,6 +297,8 @@ void mouseReleased() {
   for (Button button : timelineButtons) {
     button.checkSelect();
   }
+
+  
 
   selected = "NONE";
   selectedShape = null;

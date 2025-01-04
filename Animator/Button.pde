@@ -4,14 +4,16 @@ class Button{
   int size;
   boolean isHovered = false;
   boolean isSelected = false;
+  boolean clickButton;    // if the button should act as a clickable button or a 'switch'
   PImage icon;
 
   
-  Button(String t, PVector p, int s, PImage i){
+  Button(String t, PVector p, int s, PImage i, boolean cb){
     this.type = t;
     this.pos = p;
     this.size = s;
     this.icon = i;
+    this.clickButton = cb;
     
    
   }
@@ -32,7 +34,7 @@ class Button{
 
     fill(255);
     
-    if(!(type == "PLAYBACK" || type == "FORWARD" || type == "BACKWARD")){
+    if(!clickButton){
       square(pos.x - size/2, pos.y - size/2, size);
     }
     
@@ -65,6 +67,12 @@ class Button{
         }
         else if(type == "BACKWARD"){
           adjustTimeline(-1);
+        }
+        else if(type == "NEWKEYFRAME" && selectedShape != null){
+          selectedShape.frameData.set(time, selectedShape.getFrameData(true));
+          if(selectedShape != null){
+            selectedShape.updateAllKeyframes();
+          }
         }
         else{
           for(Button button: buttons){
