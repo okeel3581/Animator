@@ -146,7 +146,11 @@ class Shape{
           float newX, newY, newSize, newRotation;
           
           if(lerpTransitions){
+            // smoother step transition
             float smoothStep = 6 * pow(transitionScale, 5) - 15 * pow(transitionScale, 4) + 10 * pow(transitionScale, 3);
+            
+            // smooth step transition
+            //float smoothStep = -2 * pow(transitionScale, 3) + 3 * pow(transitionScale, 2);
             newX = map(smoothStep, 0, 1, firstKeyframe.pos1.x, secondKeyframe.pos1.x);
             newY = map(smoothStep, 0, 1, firstKeyframe.pos1.y, secondKeyframe.pos1.y);
             newSize = map(smoothStep, 0, 1, firstKeyframe.size, secondKeyframe.size);
