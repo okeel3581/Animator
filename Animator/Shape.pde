@@ -1,7 +1,7 @@
 class Shape{
   String type;
   PVector pos1;
-  int size;
+  float size;
   boolean isHovered = false;
   boolean isSelected = false;
   boolean isMovable = false;
@@ -94,7 +94,8 @@ class Shape{
     ArrayList<Keyframe> guidingFrameData = new ArrayList<Keyframe>();
     ArrayList<Integer> guidingFrameTimes = new ArrayList<Integer>();
     
-    // find and store all guiding keyframes
+    // find and store all guiding keyframes, keyframes do not need to be sorted
+    // as they are derived from the original set of frames, which is by definition in order
     int i = 0;
     for(Keyframe keyframe: frameData){
       if(keyframe.guidingKeyframe){
@@ -103,6 +104,8 @@ class Shape{
       }
       i++;
     }
+    
+    
     
     if(guidingFrameData.size() == 1){
       for(Keyframe keyframe: frameData){
@@ -118,33 +121,48 @@ class Shape{
       }
     }
     
-    // majority case, where there is more than 1 keyframe
+    // TODO: SORT ITEMS IN LIST BY THEIR VALUE IN GUIDINGFRAMETIMES
     else{
-      Keyframe tempFrame;
-      // fill leading up to the first keyframe
-      for(int j = 0; j < guidingFrameTimes.get(0); j++){
-        tempFrame = guidingFrameData.get(0);
-        tempFrame.guidingKeyframe = false;
-        //print(frameData.get(j).guidingKeyframe);
-        
-        frameData.set(j, tempFrame);
-       // print(frameData.get(guidingFrameTimes.get(0)).guidingKeyframe);
+      // fill all leading to first keyframe
+      for(int k = 0; k < guidingFrameTimes.get(0); k++){
+        frameData.get(k).fillThroughSet(guidingFrameData.get(0));
       }
       
-      int t = 0;
+      // fill all after last keyframe
+      for(int k = guidingFrameTimes.get(guidingFrameTimes.size() - 1) + 1; k < numFrames; k++){
+        frameData.get(k).fillThroughSet(guidingFrameData.get(guidingFrameData.size() - 1));
+      }
       
-      // fill after the last keyframe       THIS CAUSES PROBLEMS ACCORDING TO THE PRINT STATEMENT BELOW
-      //for(int k = guidingFrameTimes.get( guidingFrameData.size() - 1); k < maxTime; k++){    // maybe try maxFrames instead if not working
-      //  tempFrame = guidingFrameData.get( guidingFrameData.size() - 1 );
-      //  tempFrame.guidingKeyframe = false;
-      //  frameData.set(k, tempFrame);
-      //  println(k);
-      //}
-      
-      for(Keyframe kf: guidingFrameData){
-        println(kf.guidingKeyframe);
-        println(frameData.get(guidingFrameTimes.get(t)).guidingKeyframe);
-        t++;
+      // fill in between keyframes: runs n (num guiding keyframes) - 1 times
+      for(int k = 0; k < guidingFrameData.size() - 1; k++){
+        int firstKeyframeTime = guidingFrameTimes.get(k);
+        int secondKeyframeTime = guidingFrameTimes.get(k + 1);    // the index after k
+        Keyframe firstKeyframe = guidingFrameData.get(k);
+        Keyframe secondKeyframe = guidingFrameData.get(k + 1);
+        
+        for(int j = firstKeyframeTime + 1; j < secondKeyframeTime; j++){
+          float transitionScale = map(j, firstKeyframeTime, secondKeyframeTime, 0, 1);  // NO +1/-1
+          
+          float newX, newY, newSize, newRotation;
+          
+          if(lerpTransitions){
+            float smoothStep = 6 * pow(transitionScale, 5) - 15 * pow(transitionScale, 4) + 10 * pow(transitionScale, 3);
+            newX = map(smoothStep, 0, 1, firstKeyframe.pos1.x, secondKeyframe.pos1.x);
+            newY = map(smoothStep, 0, 1, firstKeyframe.pos1.y, secondKeyframe.pos1.y);
+            newSize = map(smoothStep, 0, 1, firstKeyframe.size, secondKeyframe.size);
+            newRotation = map(smoothStep, 0, 1, firstKeyframe.rotation, secondKeyframe.rotation);
+          }
+          else{
+            newX = map(transitionScale, 0, 1, firstKeyframe.pos1.x, secondKeyframe.pos1.x);
+            newY = map(transitionScale, 0, 1, firstKeyframe.pos1.y, secondKeyframe.pos1.y);
+            newSize = map(transitionScale, 0, 1, firstKeyframe.size, secondKeyframe.size);
+            newRotation = map(transitionScale, 0, 1, firstKeyframe.rotation, secondKeyframe.rotation);
+          }
+         
+          
+          Keyframe newKeyframe = new Keyframe(new PVector(newX, newY), newSize, newRotation, false);
+          frameData.set(j, newKeyframe);
+        }
       }
     }
   }

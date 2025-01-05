@@ -22,6 +22,7 @@ ArrayList<Button> timelineButtons = new ArrayList<Button>();
 
 
 boolean isPlaying;
+boolean lerpTransitions;
 
 void setup() {
   frameRate(60);
@@ -40,10 +41,11 @@ void setup() {
   leftSide = uiSize + 20;
   rightSide = width - 20;
   middle = (rightSide + leftSide) / 2;
-  ySide = height - 75;
+  ySide = height - 125;
   sizeSide = 20;
   timelineX = leftSide;
   isPlaying = false;
+  lerpTransitions = true;
 
   // setup edit buttons
   buttons.add(new Button("CLICK", new PVector(uiSize/3, 400), 40, loadImage("move.png"), false));
@@ -58,7 +60,7 @@ void setup() {
   timelineButtons.add(new Button("PLAYBACK", new PVector(middle, 660), 50, loadImage("play.png"), true));
   timelineButtons.add(new Button("FORWARD", new PVector(middle + 80, 660), 50, loadImage("forward.png"), true));
   timelineButtons.add(new Button("BACKWARD", new PVector(middle - 80, 660), 50, loadImage("backward.png"), true));
-  timelineButtons.add(new Button("NEWKEYFRAME", new PVector(middle - 200, 660), 50, loadImage("keyframe.png"), true));
+  timelineButtons.add(new Button("NEWKEYFRAME", new PVector(middle - 200, 660), 50, loadImage("keyframeEXTRA.png"), true));
 
 }
 
@@ -68,7 +70,16 @@ void draw() {
   if (isPlaying) {
     adjustTimeline(1);
   }
-
+  
+  for(Shape s: shapes){
+    int i = 0;
+    for(Keyframe k: s.frameData){
+      if(k.guidingKeyframe) println(str(i) + ", " + str(time));
+      i++;
+    }
+  }
+  
+  
   drawUI();
   drawTimeline();
   drawKeyframes();
@@ -174,9 +185,9 @@ void adjustTimeline(int dTime) {
 
   // update shapes to match keyframes
   for (Shape shape : shapes) {
-    shape.pos1 = shape.frameData.get(time-1).pos1;
-    shape.size = shape.frameData.get(time-1).size;
-    shape.rotation = shape.frameData.get(time-1).rotation;
+    shape.pos1 = shape.frameData.get(time).pos1;
+    shape.size = shape.frameData.get(time).size;
+    shape.rotation = shape.frameData.get(time).rotation;
   }
 }
 
@@ -190,13 +201,21 @@ void drawKeyframes() {
 
   text("Selected Shape: " + displayText, uiSize + 50, 665);
 
+  textAlign(CENTER);
+  
+  textSize(18);
   // draw guiding keyframes
   int tempTime = 0;
   if (selectedShape != null) {
     for (Keyframe keyframe : selectedShape.frameData) {
       if (keyframe.guidingKeyframe) {
         float keyframeX = map(tempTime, 0, maxTime, leftSide, rightSide);
-        square(keyframeX - 5, ySide - 5, 10);
+        //square(keyframeX - 5, ySide - 5, 10);
+        PImage keyframeIcon = loadImage("keyframe.png");
+        image(keyframeIcon, keyframeX - 15, ySide - 15, 30, 30);
+        text(tempTime, keyframeX, ySide + 35);
+        
+        
       }
       tempTime++;
     }
@@ -279,7 +298,8 @@ void mouseReleased() {
     //  }
     //}
     
-    if(selected != "TIMELINE" || timelineButtons.get(3).isHovered){
+    // make it not unselect in certain cases for more effecient workspace
+    if(selected != "TIMELINE" && !timelineButtons.get(3).isHovered && !timelineButtons.get(2).isHovered && !timelineButtons.get(1).isHovered){
       shape.isSelected = false;
     }
     shape.isMovable = false;
@@ -304,7 +324,7 @@ void mouseReleased() {
   selectedShape = null;
 }
 
-boolean onSquare(float x, float y, int sizex, int sizey) {
+boolean onSquare(float x, float y, float sizex, float sizey) {
   // x, y is center point of square
   return mouseX >= x - sizex/2 && mouseX <= x + sizex/2 && mouseY >= y - sizey/2 && mouseY <= y + sizey/2;
 }
@@ -316,14 +336,13 @@ boolean onTriangle(PVector p1, PVector p2, PVector p3) {
   boolean s2 = sign(point, p2, p3) < 0;
   boolean s3 = sign(point, p3, p1) < 0;
 
-  boolean isInside = (s1 == s2) && (s2 == s3);
-  return isInside;
+  return ((s1 == s2) && (s2 == s3));
 }
 
 float sign(PVector p1, PVector p2, PVector p3) {
   return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
 }
 
-boolean onCircle(PVector pos, int size) {
+boolean onCircle(PVector pos, float size) {
   return dist(mouseX, mouseY, pos.x, pos.y) <= size/2;
 }

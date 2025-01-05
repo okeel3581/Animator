@@ -1,10 +1,10 @@
 class Keyframe{
   PVector pos1;
-  int size;
+  float size;
   float rotation;
   boolean guidingKeyframe;
   
-  Keyframe(PVector p, int s, float r, boolean gk){
+  Keyframe(PVector p, float s, float r, boolean gk){
     this.pos1 = p;
     this.size = s;
     this.rotation = r;
