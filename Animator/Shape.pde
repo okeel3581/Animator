@@ -8,7 +8,6 @@ class Shape{
   boolean isResizable = false;
   boolean isRotatable = false;
   boolean isTransformable = false;
-  ArrayList<ControlButton> controlButtons = new ArrayList<ControlButton>();
   int buttonSize = 8;
   float rotation = 0;
   
@@ -19,15 +18,6 @@ class Shape{
     this.type = t;
     this.pos1 = p;
     this.size = s;
-    
-    // create default control buttons for a square
-    if(type == "SQUARE"){
-      controlButtons.add(new ControlButton(new PVector(pos1.x - size/2, pos1.y - size/2), buttonSize, this));  // top left
-      controlButtons.add(new ControlButton(new PVector(pos1.x + size/2, pos1.y - size/2), buttonSize, this));  // top right
-      controlButtons.add(new ControlButton(new PVector(pos1.x - size/2, pos1.y + size/2), buttonSize, this));  // bottom left
-      controlButtons.add(new ControlButton(new PVector(pos1.x + size/2, pos1.y + size/2), buttonSize, this));  // bottom right
-
-    }
     
     for(int i = 0; i < numFrames; i++){
       frameData.add(new Keyframe(pos1, size, rotation, false));
@@ -83,13 +73,7 @@ class Shape{
     strokeWeight(1);
     stroke(0);
   }
-  
-  void drawControls(){
-    if(type == "SQUARE"){
-      
-    }
-  }
-  
+
   void updateAllKeyframes(){
     ArrayList<Keyframe> guidingFrameData = new ArrayList<Keyframe>();
     ArrayList<Integer> guidingFrameTimes = new ArrayList<Integer>();
@@ -151,6 +135,7 @@ class Shape{
             
             // smooth step transition
             //float smoothStep = -2 * pow(transitionScale, 3) + 3 * pow(transitionScale, 2);
+            
             newX = map(smoothStep, 0, 1, firstKeyframe.pos1.x, secondKeyframe.pos1.x);
             newY = map(smoothStep, 0, 1, firstKeyframe.pos1.y, secondKeyframe.pos1.y);
             newSize = map(smoothStep, 0, 1, firstKeyframe.size, secondKeyframe.size);
@@ -172,7 +157,7 @@ class Shape{
   }
   
   Keyframe getFrameData(boolean guiding){
-    return new Keyframe(pos1, size, rotation, guiding);    // guiding keyframe as it has been directly edited
+    return new Keyframe(pos1, size, rotation, guiding);
   }
   
   void checkHover(){

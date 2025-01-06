@@ -1,4 +1,4 @@
-//import g4p_controls.*;
+// Animator by Lachlan O'Keefe
 
 int uiSize;
 int sideLength;
@@ -61,7 +61,6 @@ void setup() {
   timelineButtons.add(new Button("FORWARD", new PVector(middle + 80, 660), 50, loadImage("forward.png"), true));
   timelineButtons.add(new Button("BACKWARD", new PVector(middle - 80, 660), 50, loadImage("backward.png"), true));
   timelineButtons.add(new Button("NEWKEYFRAME", new PVector(middle - 200, 660), 50, loadImage("keyframeEXTRA.png"), true));
-
 }
 
 void draw() {
@@ -71,11 +70,10 @@ void draw() {
     adjustTimeline(1);
   }
   
-  
-  
   drawUI();
   drawTimeline();
   drawKeyframes();
+ 
 }
 
 void drawButtons() {
@@ -95,7 +93,7 @@ void drawUI() {
   for (Shape shape : shapes) {
     shape.checkHover();
     shape.drawMe();
-    if (shape.isSelected) selectedShape = shape;    // TEMP WORKING FIX TO SELECTED SHAPE NOT SHOWING
+    if (shape.isSelected) selectedShape = shape;
   }
 
   strokeWeight(1);
@@ -145,7 +143,7 @@ void drawUI() {
     if (mouseMode == "CLICK" && shape.isMovable && !(!onUI() && !mousePressed)) {
       shape.pos1 = new PVector(mouseX, mouseY);
     } else if (mouseMode == "RESIZE" && shape.isResizable && !(!onUI() && !mousePressed)) {
-      shape.size = int(dist(mouseX, mouseY, shape.pos1.x, shape.pos1.y)) * 2;
+      shape.size = dist(mouseX, mouseY, shape.pos1.x, shape.pos1.y) * 2;
     } else if (mouseMode == "ROTATE" && shape.isRotatable && !(!onUI() && !mousePressed)) {
       PVector mouseVector = new PVector(mouseX, mouseY);
       PVector base = mouseVector.sub(shape.pos1);
@@ -228,8 +226,6 @@ void drawTimeline() {
 }
 
 void mousePressed() {
-
-
   if (selected == "NONE") {
     if (onSquare(uiSize/2, 100, 40, 40)) {
       selected = "SQUARE";
@@ -297,13 +293,6 @@ void mouseReleased() {
   }
   
   for (Shape shape : shapes) {
-    //if (shape.isSelected) {  // update keyframes
-    //  Keyframe tempFrame = shape.getFrameData();
-    //  if(tempFrame.pos1.x != shape.pos1.x || tempFrame.pos1.y != shape.pos1.y || tempFrame.size != shape.size || tempFrame.rotation != shape.rotation){
-    //    shape.frameData.set(time, tempFrame);
-    //  }
-    //}
-    
     // make it not unselect in certain cases for more effecient workspace
     if(selected != "TIMELINE" && !timelineButtons.get(3).isHovered && !timelineButtons.get(2).isHovered && !timelineButtons.get(1).isHovered && !buttons.get(4).isHovered){
       shape.isSelected = false;
@@ -331,7 +320,6 @@ void mouseReleased() {
 }
 
 boolean onUI(){
-  
   return (mouseX < uiSize - 10 || mouseY > height - 230);
 }
 
