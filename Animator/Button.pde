@@ -56,7 +56,7 @@ class Button{
   }
   
   void checkSelect(){
-    if(isHovered && selected == "NONE"){
+    if(isHovered){
       if(onSquare(pos.x, pos.y, size, size) && isHovered) {    // change sizes for 2 dimensions
         if(type == "PLAYBACK"){    // stopping and starting
           if(isPlaying) icon = loadImage("play.png"); else icon = loadImage("pause.png");

@@ -176,19 +176,19 @@ class Shape{
   }
   
   void checkHover(){
-    if(type == "SQUARE"){
+    if(type == "SQUARE" && !onUI()){
       if(onSquare(pos1.x, pos1.y, size, size)) {    // change sizes for 2 dimensions
         isHovered = true; 
       }
       else isHovered = false;
     }
-    else if(type == "TRIANGLE"){
+    else if(type == "TRIANGLE" && !onUI()){
       if(onTriangle(new PVector(pos1.x - size/2, pos1.y + size/(2*sqrt(3))), new PVector(pos1.x + size/2, pos1.y + size/(2*sqrt(3))), new PVector(pos1.x, pos1.y - size/sqrt(3)))){
         isHovered = true;
       }
       else isHovered = false;
     }
-    else if(type == "CIRCLE"){
+    else if(type == "CIRCLE" && !onUI()){
       if(onCircle(pos1, size)){
         isHovered = true;
       }

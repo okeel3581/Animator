@@ -71,13 +71,6 @@ void draw() {
     adjustTimeline(1);
   }
   
-  for(Shape s: shapes){
-    int i = 0;
-    for(Keyframe k: s.frameData){
-      if(k.guidingKeyframe) println(str(i) + ", " + str(time));
-      i++;
-    }
-  }
   
   
   drawUI();
@@ -149,15 +142,15 @@ void drawUI() {
   }
 
   for (Shape shape : shapes) {
-    if (mouseMode == "CLICK" && shape.isMovable) {
+    if (mouseMode == "CLICK" && shape.isMovable && !(!onUI() && !mousePressed)) {
       shape.pos1 = new PVector(mouseX, mouseY);
-    } else if (mouseMode == "RESIZE" && shape.isResizable) {
+    } else if (mouseMode == "RESIZE" && shape.isResizable && !(!onUI() && !mousePressed)) {
       shape.size = int(dist(mouseX, mouseY, shape.pos1.x, shape.pos1.y)) * 2;
-    } else if (mouseMode == "ROTATE" && shape.isRotatable) {
+    } else if (mouseMode == "ROTATE" && shape.isRotatable && !(!onUI() && !mousePressed)) {
       PVector mouseVector = new PVector(mouseX, mouseY);
       PVector base = mouseVector.sub(shape.pos1);
       shape.rotation = base.heading();
-    } else if (mouseMode == "TRANSFORM" && shape.isTransformable) {
+    } else if (mouseMode == "TRANSFORM" && shape.isTransformable && !(!onUI() && !mousePressed)) {
       PVector mouseVector = new PVector(mouseX, mouseY);
       PVector base = mouseVector.sub(shape.pos1);
       shape.rotation = base.heading();
@@ -250,16 +243,16 @@ void mousePressed() {
   }
 
   for (Shape shape : shapes) {
-    if (shape.isSelected && shape.isHovered && mouseMode == "CLICK") {
+    if (shape.isSelected && shape.isHovered && mouseMode == "CLICK" && !onUI()) {
       shape.isMovable = true;
       cursor(MOVE);
-    } else if (shape.isSelected && shape.isHovered && mouseMode == "RESIZE") {
+    } else if (shape.isSelected && shape.isHovered && mouseMode == "RESIZE" && !onUI()) {
       shape.isResizable = true;
       cursor(CROSS);
-    } else if (shape.isSelected && shape.isHovered && mouseMode == "ROTATE") {
+    } else if (shape.isSelected && shape.isHovered && mouseMode == "ROTATE" && !onUI()) {
       shape.isRotatable = true;
       cursor(HAND);
-    } else if (shape.isSelected && shape.isHovered && mouseMode == "TRANSFORM") {
+    } else if (shape.isSelected && shape.isHovered && mouseMode == "TRANSFORM" && !onUI()) {
       shape.isTransformable = true;
       cursor(CROSS);
     }
@@ -268,10 +261,23 @@ void mousePressed() {
 
 void mouseReleased() {
   if (mouseMode == "DELETE") {
-    for (Shape shape : shapes) {
+    for (Shape shape : shapes) {      
       if (shape.isSelected && shape.isHovered) {
         shapes.remove(shape);
         break;
+      }
+    }
+    if(selectedShape != null){
+      int tempTime = 0;
+      for(Keyframe keyframe: selectedShape.frameData){
+        if(keyframe.guidingKeyframe){
+          float keyframeX = map(tempTime, 0, maxTime, leftSide, rightSide);
+          if(onSquare(keyframeX, ySide, 30, 30)){
+            keyframe.guidingKeyframe = false;
+            selectedShape.updateAllKeyframes();
+          }
+        }
+        tempTime++;
       }
     }
   }
@@ -299,7 +305,7 @@ void mouseReleased() {
     //}
     
     // make it not unselect in certain cases for more effecient workspace
-    if(selected != "TIMELINE" && !timelineButtons.get(3).isHovered && !timelineButtons.get(2).isHovered && !timelineButtons.get(1).isHovered){
+    if(selected != "TIMELINE" && !timelineButtons.get(3).isHovered && !timelineButtons.get(2).isHovered && !timelineButtons.get(1).isHovered && !buttons.get(4).isHovered){
       shape.isSelected = false;
     }
     shape.isMovable = false;
@@ -322,6 +328,11 @@ void mouseReleased() {
 
   selected = "NONE";
   selectedShape = null;
+}
+
+boolean onUI(){
+  
+  return (mouseX < uiSize - 10 || mouseY > height - 230);
 }
 
 boolean onSquare(float x, float y, float sizex, float sizey) {
